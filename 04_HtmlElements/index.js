@@ -1,91 +1,60 @@
-document.addEventListener("DOMContentLoaded", ()=>{
-    pageLoaded();
-});
+// Elements
+const txt1 = document.getElementById("txt1");
+const txt2 = document.getElementById("txt2");
+const btnCalc = document.getElementById("btnCalc");
+const lblRes = document.getElementById("lblRes");
+const output = document.getElementById("output");
 
-let txt1;
-let txt2;
-let btn;
-let lblRes;
-
-function pageLoaded(){
-    txt1 = document.getElementById('txt1');
-    txt2 = document.querySelector('#txt2'); //same thing as the others
-    btn = document.getElementById('btnCalc');
-    btn.addEventListener('click',()=>{
-        Calculate();
-    });
-    lblRes = document.getElementById('lblRes');
-
+// Validate input (number only)
+function validateInput(input) {
+    if (!isNaN(input.value) && input.value.trim() !== "") {
+        input.classList.remove("is-invalid");
+        input.classList.add("is-valid");
+        return true;
+    } else {
+        input.classList.remove("is-valid");
+        input.classList.add("is-invalid");
+        return false;
+    }
 }
-function Calculate(){
-    let txt1Text = txt1.value;
-    let num1 = parseInt(txt1Text);
-    let txt2Text = txt2.value;
-    let num2 = parseInt(txt2Text);
-    
-    let res = num1+num2;
+
+// Print to textarea with append mode
+function print(msg, append = false) {
+    if (append) output.value += (output.value ? "\n" : "") + msg;
+    else output.value = msg;
+}
+
+// Convert operation value to symbol
+function opSymbol(op) {
+    switch (op) {
+        case "add": return "+";
+        case "sub": return "−";
+        case "mul": return "×";
+        case "div": return "÷";
+    }
+}
+
+// Calculate button click
+btnCalc.addEventListener("click", () => {
+    if (!validateInput(txt1) || !validateInput(txt2)) {
+        alert("Please enter valid numbers!");
+        return;
+    }
+
+    const num1 = parseFloat(txt1.value);
+    const num2 = parseFloat(txt2.value);
+    const op = document.getElementById("operation").value;
+    let res;
+
+    switch (op) {
+        case "add": res = num1 + num2; break;
+        case "sub": res = num1 - num2; break;
+        case "mul": res = num1 * num2; break;
+        case "div":
+            if (num2 === 0) { alert("Cannot divide by zero!"); return; }
+            res = num1 / num2; break;
+    }
+
     lblRes.innerText = res;
-    
-}
-
-const btn2 = document.getElementById("btn2");
-btn2.addEventListener("click",()=>{
-
-    print("btn2 clicked: " + btn2.id +" | " + btn2.innerText);
+    print(`${num1} ${opSymbol(op)} ${num2} = ${res}`, true);
 });
-
-//btn2.addEventListener("click",func1);
-//function func1(){}
-
-function print(msg) {
-
-    //--Get TextArea Element Reference
-    const ta = document.getElementById("output");
-    //--Write msg to TextArea Text
-    if (ta) ta.value = msg;
-    //--Write Log
-    else console.log(msg);
-}
-
-// =============================================
-// STEP 1: JS NATIVE TYPES, USEFUL TYPES & OPERATIONS
-// =============================================
-function demoNative() {
-    let out = "=== STEP 1: NATIVE TYPES ===\n";
-
-    // String
-    const s = "Hello World";
-    out += "\n[String] s = " + s;
-    out += "\nLength: " + s.length;
-    out += "\nUpper: " + s.toUpperCase();
-
-    // Number
-    const n = 42;
-    out += "\n\n[Number] n = " + n;
-
-    // Boolean
-    const b = true;
-    out += "\n\n[Boolean] b = " + b;
-
-    // Date
-    const d = new Date();
-    out += "\n\n[Date] now = " + d.toISOString();
-
-    // Array
-    const arr = [1, 2, 3, 4];
-    out += "\n\n[Array] arr = [" + arr.join(", ") + "]";
-    out += "\nPush 5 → " + (arr.push(5), arr.join(", "));
-    out += "\nMap x2 → " + arr.map(x=>x*2).join(", ");
-
-    // Functions as variables
-    const add = function(a,b){ return a+b; };
-    out += "\n\n[Function as variable] add(3,4) = " + add(3,4);
-
-    // Callback
-    function calc(a,b,fn){ return fn(a,b); }
-    const result = calc(10,20,(x,y)=>x+y);
-    out += "\n[Callback] calc(10,20, x+y ) = " + result;
-
-    //Print to Log
-    print(out);
-}
